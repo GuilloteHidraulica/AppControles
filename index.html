@@ -3,267 +3,273 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GUILLOTE HIDRÁULICA - Control Pro</title>
+    <title>GUILLOTE HIDRÁULICA - v4.0</title>
+    <!-- Librería PDF con respaldo -->
     <script src="https://cdnjs.cloudflare.com"></script>
     <style>
         :root {
-            --metal: #2c3e50;
-            --azul-hidraulico: #3498db;
-            --naranja-alerta: #f39c12;
-            --fondo: #0f0f0f;
-            --led-on: #2ecc71;
+            --acero: #34495e;
+            --azul-hidraulico: #00d2ff;
+            --naranja-mecanico: #ff9f43;
+            --fondo-taller: #1e272e;
+            --texto: #dcdde1;
         }
 
         body {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: var(--fondo);
-            background-image: radial-gradient(#222 5%, transparent 5%);
-            background-size: 20px 20px;
-            color: #ecf0f1;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--fondo-taller);
+            color: var(--texto);
             margin: 0;
             display: flex;
             justify-content: center;
             padding: 20px;
         }
 
-        .panel-principal {
+        /* Estética de Placa de Metal */
+        .contenedor {
             width: 100%;
-            max-width: 700px;
-            background: linear-gradient(145deg, #1e272e, #2f3640);
-            border: 4px solid #444;
-            border-radius: 15px;
+            max-width: 600px;
+            background: linear-gradient(145deg, #2c3e50, #1a252f);
+            border: 4px solid #576574;
+            border-radius: 10px;
             padding: 25px;
-            box-shadow: 10px 10px 20px #000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 15px rgba(255,255,255,0.05);
             position: relative;
         }
 
-        .header {
+        h1 {
+            color: var(--azul-hidraulico);
             text-align: center;
-            border-bottom: 3px double var(--azul-hidraulico);
-            margin-bottom: 25px;
-            padding-bottom: 10px;
-        }
-
-        .header h1 { margin: 0; color: var(--azul-hidraulico); letter-spacing: 3px; }
-
-        .led {
-            height: 10px; width: 10px; background: var(--led-on);
-            border-radius: 50%; display: inline-block;
-            box-shadow: 0 0 10px var(--led-on);
-            margin-right: 10px;
-        }
-
-        .menu-grid { display: grid; gap: 20px; }
-
-        .btn-industrial {
-            background: #3d3d3d;
-            color: white;
-            padding: 20px;
-            border: 2px solid #555;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
             text-transform: uppercase;
-            box-shadow: inset 0 0 5px #000;
-            transition: 0.2s;
+            letter-spacing: 2px;
+            border-bottom: 2px solid var(--azul-hidraulico);
+            padding-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
         }
 
-        .btn-industrial:hover { background: var(--azul-hidraulico); border-color: #fff; }
-        .btn-naranja { border-color: var(--naranja-alerta); color: var(--naranja-alerta); }
-        .btn-naranja:hover { background: var(--naranja-alerta); color: white; }
+        /* Botones Estilo Interruptor */
+        .btn {
+            width: 100%;
+            padding: 18px;
+            margin: 10px 0;
+            background: #2f3640;
+            color: white;
+            border: 2px solid #576574;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: var(--azul-hidraulico);
+            color: #1e272e;
+            box-shadow: 0 0 15px var(--azul-hidraulico);
+        }
+
+        .btn-save { border-color: var(--naranja-mecanico); color: var(--naranja-mecanico); }
+        .btn-save:hover { background: var(--naranja-mecanico); color: white; }
 
         .vista { display: none; }
-        .activa { display: block; animation: fadeIn 0.5s; }
+        .activa { display: block; }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* Formulario */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        .full { grid-column: span 2; }
 
-        .form-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .full-width { grid-column: span 2; }
-
-        label { color: var(--naranja-alerta); font-size: 0.8em; font-weight: bold; display: block; margin-bottom: 5px; }
-
+        label { display: block; color: var(--naranja-mecanico); font-size: 12px; margin-bottom: 5px; font-weight: bold; }
+        
         input, textarea {
             width: 100%;
             padding: 12px;
             background: #111;
-            border: 1px solid var(--azul-hidraulico);
-            color: #2ecc71;
-            border-radius: 4px;
+            border: 1px solid #444;
+            color: #00ff00; /* Verde monitor antiguo */
+            border-radius: 3px;
             box-sizing: border-box;
-            font-family: monospace;
+            font-family: 'Courier New', Courier, monospace;
         }
 
-        .tarjeta-registro {
-            background: #222;
+        /* Lista de Archivos */
+        .card {
+            background: rgba(0,0,0,0.3);
             border-left: 5px solid var(--azul-hidraulico);
             padding: 15px;
             margin-bottom: 15px;
-            border-radius: 0 10px 10px 0;
+            border-radius: 4px;
         }
 
-        .btn-volver { color: #888; cursor: pointer; text-decoration: underline; margin-bottom: 15px; display: inline-block; }
+        .volver { color: #aaa; cursor: pointer; display: inline-block; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
-<div class="panel-principal">
+<div class="contenedor">
     
-    <!-- MENÚ -->
-    <div id="vista-menu" class="vista activa">
-        <div class="header">
-            <h1><span class="led"></span>SISTEMA HIDRÁULICO</h1>
-            <p>GUILLOTE HIDRÁULICA v3.0</p>
-        </div>
-        <div class="menu-grid">
-            <button class="btn-industrial" onclick="navegar('vista-carga')">⚙️ Cargar Datos Máquina</button>
-            <button class="btn-industrial btn-naranja" onclick="navegar('vista-archivo'); listarRegistros();">📂 Ver Archivo de Trabajos</button>
-        </div>
+    <!-- MENU PRINCIPAL -->
+    <div id="menu" class="vista activa">
+        <h1>⚙️ CONTROL HIDRÁULICO</h1>
+        <button class="btn" onclick="cambiarVista('carga')">📥 CARGAR NUEVO TRABAJO</button>
+        <button class="btn" onclick="cambiarVista('archivo'); renderizarLista();">📂 ABRIR ARCHIVO (PDFs)</button>
     </div>
 
-    <!-- CARGA DE DATOS -->
-    <div id="vista-carga" class="vista">
-        <span class="btn-volver" onclick="navegar('vista-menu')">↩ VOLVER AL PANEL</span>
-        <h2 style="color: var(--azul-hidraulico)">REGISTRO TÉCNICO</h2>
-        <div class="form-container">
-            <div class="full-width">
-                <label>DIRECTOR DE PROYECTO / CLIENTE</label>
-                <input type="text" id="inp-director">
+    <!-- VISTA DE CARGA -->
+    <div id="carga" class="vista">
+        <span class="volver" onclick="cambiarVista('menu')">← VOLVER AL PANEL</span>
+        <div class="grid">
+            <div class="full">
+                <label>DIRECTOR DE PROYECTO</label>
+                <input type="text" id="f-director" placeholder="Nombre del responsable">
             </div>
             <div>
-                <label>MARCA</label>
-                <input type="text" id="inp-marca">
+                <label>MARCA MÁQUINA</label>
+                <input type="text" id="f-marca">
             </div>
             <div>
                 <label>MODELO</label>
-                <input type="text" id="inp-modelo">
+                <input type="text" id="f-modelo">
             </div>
             <div>
                 <label>N° DE SERIE</label>
-                <input type="text" id="inp-serie">
+                <input type="text" id="f-serie">
             </div>
             <div>
                 <label>HORAS DE TRABAJO</label>
-                <input type="number" id="inp-horas">
+                <input type="number" id="f-horas">
             </div>
-            <div class="full-width">
+            <div class="full">
                 <label>TRABAJOS REALIZADOS</label>
-                <textarea id="inp-realizados" rows="2"></textarea>
+                <textarea id="f-realizados" rows="2"></textarea>
             </div>
-            <div class="full-width">
+            <div class="full">
                 <label>TRABAJOS PENDIENTES</label>
-                <textarea id="inp-pendientes" rows="2"></textarea>
+                <textarea id="f-pendientes" rows="2"></textarea>
             </div>
-            <div class="full-width">
+            <div class="full">
                 <label>OBSERVACIONES</label>
-                <textarea id="inp-obs" rows="2"></textarea>
+                <textarea id="f-obs" rows="2"></textarea>
             </div>
-            <button class="btn-industrial full-width" onclick="guardarDatos()">💾 PROCESAR Y GUARDAR</button>
+            <button class="btn btn-save full" onclick="guardarInfo()">✅ GUARDAR DATOS EN MEMORIA</button>
         </div>
     </div>
 
-    <!-- ARCHIVO -->
-    <div id="vista-archivo" class="vista">
-        <span class="btn-volver" onclick="navegar('vista-menu')">↩ VOLVER AL PANEL</span>
-        <h2 style="color: var(--naranja-alerta)">ARCHIVO DE REGISTROS</h2>
-        <div id="lista-contenedor" style="max-height: 500px; overflow-y: auto; padding-right: 10px;"></div>
+    <!-- VISTA DE ARCHIVO -->
+    <div id="archivo" class="vista">
+        <span class="volver" onclick="cambiarVista('menu')">← VOLVER AL PANEL</span>
+        <h2>LISTADO DE REPORTES</h2>
+        <div id="lista-reportes"></div>
     </div>
 
 </div>
 
 <script>
-    const { jsPDF } = window.jspdf;
+    // Referencia global a jsPDF
+    window.jsPDF = window.jspdf ? window.jspdf.jsPDF : null;
 
-    function navegar(id) {
+    function cambiarVista(id) {
         document.querySelectorAll('.vista').forEach(v => v.classList.remove('activa'));
         document.getElementById(id).classList.add('activa');
     }
 
-    function guardarDatos() {
-        const registro = {
-            director: document.getElementById('inp-director').value,
-            marca: document.getElementById('inp-marca').value,
-            modelo: document.getElementById('inp-modelo').value,
-            serie: document.getElementById('inp-serie').value,
-            horas: document.getElementById('inp-horas').value,
-            realizados: document.getElementById('inp-realizados').value,
-            pendientes: document.getElementById('inp-pendientes').value,
-            obs: document.getElementById('inp-obs').value,
+    function guardarInfo() {
+        const data = {
+            director: document.getElementById('f-director').value,
+            marca: document.getElementById('f-marca').value,
+            modelo: document.getElementById('f-modelo').value,
+            serie: document.getElementById('f-serie').value,
+            horas: document.getElementById('f-horas').value,
+            realizados: document.getElementById('f-realizados').value,
+            pendientes: document.getElementById('f-pendientes').value,
+            obs: document.getElementById('f-obs').value,
             fecha: new Date().toLocaleString()
         };
 
-        if(!registro.director || !registro.marca) {
-            alert("Error: Faltan datos críticos (Director y Marca)");
-            return;
-        }
+        if(!data.director || !data.marca) return alert("Complete Cliente y Marca como mínimo.");
 
-        let db = JSON.parse(localStorage.getItem('gh_data')) || [];
-        db.push(registro);
-        localStorage.setItem('gh_data', JSON.stringify(db));
+        let registros = JSON.parse(localStorage.getItem('guillote_db')) || [];
+        registros.push(data);
+        localStorage.setItem('guillote_db', JSON.stringify(registros));
 
-        alert("DATOS ALMACENADOS CORRECTAMENTE");
-        limpiarInputs();
-        navegar('vista-menu');
+        alert("Registro guardado con éxito.");
+        limpiarForm();
+        cambiarVista('menu');
     }
 
-    function listarRegistros() {
-        const contenedor = document.getElementById('lista-contenedor');
-        const db = JSON.parse(localStorage.getItem('gh_data')) || [];
+    function renderizarLista() {
+        const contenedor = document.getElementById('lista-reportes');
+        const registros = JSON.parse(localStorage.getItem('guillote_db')) || [];
         
-        if(db.length === 0) {
-            contenedor.innerHTML = "<p>ARCHIVO VACÍO</p>";
+        if(registros.length === 0) {
+            contenedor.innerHTML = "<p>No hay datos cargados.</p>";
             return;
         }
 
-        contenedor.innerHTML = db.reverse().map((reg, idx) => `
-            <div class="tarjeta-registro">
-                <div style="font-size: 0.8em; color: #888;">${reg.fecha}</div>
-                <div style="font-weight: bold; color: var(--azul-hidraulico); margin: 5px 0;">
-                    ${reg.marca} ${reg.modelo} - SN: ${reg.serie}
-                </div>
-                <div style="font-size: 0.9em;">Resp: ${reg.director}</div>
-                <button class="btn-industrial" style="padding: 5px 10px; margin-top:10px; width: 100%; font-size: 0.7em;" 
-                    onclick="exportarPDF(${db.length - 1 - idx})">📄 GENERAR PDF</button>
+        contenedor.innerHTML = registros.reverse().map((r, i) => `
+            <div class="card">
+                <strong>${r.marca} ${r.modelo}</strong><br>
+                <small>Fecha: ${r.fecha} | S/N: ${r.serie}</small><br>
+                <button class="btn" style="padding: 10px; font-size: 12px;" onclick="bajarPDF(${registros.length - 1 - i})">
+                    📥 DESCARGAR REPORTE PDF
+                </button>
             </div>
         `).join('');
     }
 
-    function exportarPDF(index) {
-        const data = JSON.parse(localStorage.getItem('gh_data'))[index];
+    function bajarPDF(index) {
+        const r = JSON.parse(localStorage.getItem('guillote_db'))[index];
+        
+        if(!window.jspdf) {
+            alert("Error: La librería PDF no cargó. Revisa tu conexión a internet.");
+            return;
+        }
+
         const doc = new jsPDF();
+        
+        // Encabezado
+        doc.setFillColor(44, 62, 80);
+        doc.rect(0, 0, 210, 40, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(22);
+        doc.text("GUILLOTE HIDRÁULICA", 20, 25);
+        
+        // Cuerpo
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(12);
+        let y = 50;
 
-        doc.setFont("courier", "bold");
-        doc.text("GUILLOTE HIDRÁULICA - REPORTE TÉCNICO", 15, 20);
-        doc.setFont("courier", "normal");
-        doc.setFontSize(10);
-        doc.text(`FECHA: ${data.fecha}`, 15, 30);
-        doc.line(15, 32, 195, 32);
-
-        const campos = [
-            ["DIRECTOR DE PROYECTO", data.director],
-            ["MARCA", data.marca],
-            ["MODELO", data.modelo],
-            ["N° SERIE", data.serie],
-            ["HORAS", data.horas],
-            ["", ""],
-            ["TRABAJOS REALIZADOS", data.realizados],
-            ["TRABAJOS PENDIENTES", data.pendientes],
-            ["OBSERVACIONES", data.obs]
+        const lineas = [
+            ["FECHA:", r.fecha],
+            ["DIRECTOR PROYECTO:", r.director],
+            ["EQUIPO:", `${r.marca} - ${r.modelo}`],
+            ["N° SERIE:", r.serie],
+            ["HORAS:", r.horas],
+            ["------------------------------------------", ""],
+            ["TRABAJOS REALIZADOS:", ""],
+            ["", r.realizados],
+            ["TRABAJOS PENDIENTES:", ""],
+            ["", r.pendientes],
+            ["OBSERVACIONES:", ""],
+            ["", r.obs]
         ];
 
-        let y = 45;
-        campos.forEach(c => {
-            doc.setFont("courier", "bold");
-            doc.text(`${c[0]}:`, 15, y);
-            doc.setFont("courier", "normal");
-            doc.text(`${c[1]}`, 70, y);
+        lineas.forEach(linea => {
+            doc.setFont("helvetica", "bold");
+            doc.text(linea[0], 20, y);
+            doc.setFont("helvetica", "normal");
+            doc.text(linea[1], 70, y);
             y += 10;
         });
 
-        doc.save(`Reporte_${data.marca}_${data.serie}.pdf`);
+        // Pie de página
+        doc.setFontSize(10);
+        doc.text("Reporte generado por AppControles v4.0", 20, 280);
+
+        doc.save(`Reporte_${r.marca}_${r.serie}.pdf`);
     }
 
-    function limpiarInputs() {
-        document.querySelectorAll('input, textarea').forEach(i => i.value = '');
+    function limpiarForm() {
+        document.querySelectorAll('input, textarea').forEach(el => el.value = '');
     }
 </script>
 
