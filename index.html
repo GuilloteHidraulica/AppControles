@@ -1,1 +1,191 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"/><link rel="icon" href="/favicon.ico"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#000000"/><meta name="description" content="Web site created using create-react-app"/><link rel="apple-touch-icon" href="/logo192.png"/><link rel="manifest" href="/manifest.json"/><title>React App</title><script defer="defer" src="static/js/main.366f1706.js"></script><link href="static/css/main.e6c13ad2.css" rel="stylesheet"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"></div></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guillote Hidráulica - AppControles</title>
+    <style>
+        :root {
+            --acero-oscuro: #2c3e50;
+            --azul-hidraulico: #2980b9;
+            --naranja-alerta: #e67e22;
+            --gris-maquina: #ecf0f1;
+            --borde: #bdc3c7;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a;
+            color: var(--gris-maquina);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: var(--acero-oscuro);
+            border: 4px solid var(--azul-hidraulico);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--azul-hidraulico);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 2px solid var(--azul-hidraulico);
+            padding-bottom: 10px;
+        }
+
+        .panel-control {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            background: #34495e;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        label { font-weight: bold; color: var(--naranja-alerta); }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            background: #2c3e50;
+            border: 1px solid var(--azul-hidraulico);
+            color: white;
+            border-radius: 4px;
+        }
+
+        button {
+            grid-column: span 2;
+            padding: 15px;
+            background: var(--naranja-alerta);
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+
+        button:hover { background: #d35400; transform: scale(1.01); }
+
+        .historial {
+            background: white;
+            color: #333;
+            border-radius: 5px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .control-card {
+            border-left: 5px solid var(--azul-hidraulico);
+            background: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .badge { background: var(--azul-hidraulico); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8em; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>⚙️ Panel de Control Hidráulico</h1>
+    
+    <div class="panel-control">
+        <div>
+            <label>Orden de Trabajo:</label>
+            <input type="text" id="orden" placeholder="Ej: OT-2024-001">
+        </div>
+        <div>
+            <label>Componente:</label>
+            <select id="componente">
+                <option value="Cilindro">Cilindro</option>
+                <option value="Bomba">Bomba</option>
+                <option value="Válvula">Válvula</option>
+                <option value="Motor">Motor Hidráulico</option>
+            </select>
+        </div>
+        <div style="grid-column: span 2;">
+            <label>Observaciones Técnicas:</label>
+            <textarea id="obs" rows="3" placeholder="Detalles de la inspección..."></textarea>
+        </div>
+        <button onclick="guardarControl()">🔧 Registrar Control</button>
+        <button onclick="descargarJSON()" style="background: #7f8c8d; font-size: 0.8em; margin-top: 5px;">Descargar Backup (Archivo)</button>
+    </div>
+
+    <div class="historial">
+        <h3 style="margin-top:0">📋 Registro de Actividad</h3>
+        <div id="listaControles">
+            <!-- Los datos se cargan aquí -->
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. Cargar datos al iniciar
+    document.addEventListener('DOMContentLoaded', mostrarControles);
+
+    function guardarControl() {
+        const orden = document.getElementById('orden').value;
+        const componente = document.getElementById('componente').value;
+        const obs = document.getElementById('obs').value;
+        const fecha = new Date().toLocaleString();
+
+        if(!orden) { alert("Ingresa el número de orden"); return; }
+
+        const nuevoControl = { orden, componente, obs, fecha };
+
+        // 2. Almacenamiento en LocalStorage (Persistente en el navegador)
+        let controles = JSON.parse(localStorage.getItem('controlesHidraulicos')) || [];
+        controles.push(nuevoControl);
+        localStorage.setItem('controlesHidraulicos', JSON.stringify(controles));
+
+        limpiarCampos();
+        mostrarControles();
+    }
+
+    function mostrarControles() {
+        const lista = document.getElementById('listaControles');
+        const controles = JSON.parse(localStorage.getItem('controlesHidraulicos')) || [];
+        
+        lista.innerHTML = controles.reverse().map(c => `
+            <div class="control-card">
+                <div>
+                    <strong>${c.orden}</strong> <span class="badge">${c.componente}</span><br>
+                    <small style="color: #666;">${c.fecha}</small><br>
+                    <p style="margin: 5px 0;">${c.obs}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function limpiarCampos() {
+        document.getElementById('orden').value = '';
+        document.getElementById('obs').value = '';
+    }
+
+    // 3. Exportar a un archivo real (Carga en archivos)
+    function descargarJSON() {
+        const data = localStorage.getItem('controlesHidraulicos');
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `controles_guillote_${new Date().toLocaleDateString()}.json`;
+        a.click();
+    }
+</script>
+
+</body>
+</html>
