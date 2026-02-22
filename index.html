@@ -3,187 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guillote Hidráulica - AppControles</title>
+    <title>Guillote Hidráulica - Sistema de Control</title>
     <style>
         :root {
-            --acero-oscuro: #2c3e50;
+            --acero: #2c3e50;
             --azul-hidraulico: #2980b9;
-            --naranja-alerta: #e67e22;
-            --gris-maquina: #ecf0f1;
-            --borde: #bdc3c7;
+            --naranja-mecanico: #e67e22;
+            --gris-fondo: #1a1a1a;
+            --blanco-humo: #ecf0f1;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #1a1a1a;
-            color: var(--gris-maquina);
+            font-family: 'Arial', sans-serif;
+            background-color: var(--gris-fondo);
+            color: var(--blanco-humo);
             margin: 0;
-            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
-        .container {
-            max-width: 900px;
-            margin: auto;
-            background: var(--acero-oscuro);
+        .contenedor-principal {
+            width: 90%;
+            max-width: 500px;
+            background: var(--acero);
             border: 4px solid var(--azul-hidraulico);
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.7);
+            text-align: center;
         }
 
         h1 {
-            text-align: center;
             color: var(--azul-hidraulico);
             text-transform: uppercase;
-            letter-spacing: 2px;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
             border-bottom: 2px solid var(--azul-hidraulico);
             padding-bottom: 10px;
         }
 
-        .panel-control {
+        /* Botones del Menú Principal */
+        .menu-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            background: #34495e;
-            padding: 20px;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            grid-template-columns: 1fr;
+            gap: 20px;
         }
 
-        label { font-weight: bold; color: var(--naranja-alerta); }
+        .btn-menu {
+            padding: 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: white;
+            background: #34495e;
+            border: 2px solid var(--azul-hidraulico);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            text-transform: uppercase;
+        }
 
-        input, select, textarea {
+        .btn-menu:hover {
+            background: var(--azul-hidraulico);
+            transform: scale(1.03);
+            box-shadow: 0 0 15px var(--azul-hidraulico);
+        }
+
+        .btn-naranja { border-color: var(--naranja-mecanico); }
+        .btn-naranja:hover { background: var(--naranja-mecanico); box-shadow: 0 0 15px var(--naranja-mecanico); }
+
+        /* Vistas ocultas */
+        .vista { display: none; text-align: left; }
+        .activa { display: block; }
+
+        input, textarea, select {
             width: 100%;
-            padding: 10px;
-            background: #2c3e50;
+            padding: 12px;
+            margin: 10px 0;
+            background: #1a1a1a;
             border: 1px solid var(--azul-hidraulico);
             color: white;
-            border-radius: 4px;
+            border-radius: 5px;
+            box-sizing: border-box;
         }
 
-        button {
-            grid-column: span 2;
-            padding: 15px;
-            background: var(--naranja-alerta);
-            color: white;
+        .btn-volver {
+            background: #7f8c8d;
             border: none;
-            font-weight: bold;
+            padding: 10px;
+            color: white;
+            margin-bottom: 15px;
             cursor: pointer;
-            text-transform: uppercase;
-            transition: 0.3s;
+            border-radius: 5px;
         }
 
-        button:hover { background: #d35400; transform: scale(1.01); }
-
-        .historial {
+        .tarjeta-archivo {
             background: white;
             color: #333;
-            border-radius: 5px;
-            padding: 15px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .control-card {
-            border-left: 5px solid var(--azul-hidraulico);
-            background: #f9f9f9;
-            margin-bottom: 10px;
             padding: 10px;
-            border-bottom: 1px solid #ddd;
-            display: flex;
-            justify-content: space-between;
+            margin-bottom: 10px;
+            border-left: 5px solid var(--naranja-mecanico);
+            border-radius: 3px;
         }
-
-        .badge { background: var(--azul-hidraulico); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8em; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>⚙️ Panel de Control Hidráulico</h1>
+<div class="contenedor-principal">
     
-    <div class="panel-control">
-        <div>
-            <label>Orden de Trabajo:</label>
-            <input type="text" id="orden" placeholder="Ej: OT-2024-001">
+    <!-- MENU PRINCIPAL -->
+    <div id="menu" class="vista activa">
+        <h1>⚙️ GUILLOTE HIDRÁULICA</h1>
+        <div class="menu-grid">
+            <button class="btn-menu" onclick="irA('nuevo')">👤 Cliente Nuevo</button>
+            <button class="btn-menu" onclick="irA('existente')">🔍 Cliente Existente</button>
+            <button class="btn-menu btn-naranja" onclick="irA('archivo'); cargarArchivo();">📂 Archivo de Controles</button>
         </div>
-        <div>
-            <label>Componente:</label>
-            <select id="componente">
-                <option value="Cilindro">Cilindro</option>
-                <option value="Bomba">Bomba</option>
-                <option value="Válvula">Válvula</option>
-                <option value="Motor">Motor Hidráulico</option>
-            </select>
-        </div>
-        <div style="grid-column: span 2;">
-            <label>Observaciones Técnicas:</label>
-            <textarea id="obs" rows="3" placeholder="Detalles de la inspección..."></textarea>
-        </div>
-        <button onclick="guardarControl()">🔧 Registrar Control</button>
-        <button onclick="descargarJSON()" style="background: #7f8c8d; font-size: 0.8em; margin-top: 5px;">Descargar Backup (Archivo)</button>
     </div>
 
-    <div class="historial">
-        <h3 style="margin-top:0">📋 Registro de Actividad</h3>
-        <div id="listaControles">
-            <!-- Los datos se cargan aquí -->
-        </div>
+    <!-- VISTA: CLIENTE NUEVO -->
+    <div id="nuevo" class="vista">
+        <button class="btn-volver" onclick="irA('menu')">⬅ Volver</button>
+        <h2>Nuevo Registro</h2>
+        <input type="text" id="nombre" placeholder="Nombre del Cliente">
+        <input type="text" id="equipo" placeholder="Equipo / Máquina">
+        <textarea id="detalle" rows="4" placeholder="Detalle del problema..."></textarea>
+        <button class="btn-menu" style="width:100%" onclick="guardarDato()">💾 Guardar en Archivo</button>
     </div>
+
+    <!-- VISTA: CLIENTE EXISTENTE (Buscador) -->
+    <div id="existente" class="vista">
+        <button class="btn-volver" onclick="irA('menu')">⬅ Volver</button>
+        <h2>Buscar Cliente</h2>
+        <input type="text" placeholder="Ingrese nombre o OT...">
+        <p style="text-align: center; color: #95a5a6;">Función de búsqueda en desarrollo...</p>
+    </div>
+
+    <!-- VISTA: ARCHIVO -->
+    <div id="archivo" class="vista">
+        <button class="btn-volver" onclick="irA('menu')">⬅ Volver</button>
+        <h2>Historial de Trabajos</h2>
+        <div id="lista-archivo" style="max-height: 300px; overflow-y: auto;">
+            <!-- Aquí aparecen los datos guardados -->
+        </div>
+        <button class="btn-volver" style="width: 100%; margin-top: 10px;" onclick="descargarJSON()">📥 Descargar Backup .JSON</button>
+    </div>
+
 </div>
 
 <script>
-    // 1. Cargar datos al iniciar
-    document.addEventListener('DOMContentLoaded', mostrarControles);
-
-    function guardarControl() {
-        const orden = document.getElementById('orden').value;
-        const componente = document.getElementById('componente').value;
-        const obs = document.getElementById('obs').value;
-        const fecha = new Date().toLocaleString();
-
-        if(!orden) { alert("Ingresa el número de orden"); return; }
-
-        const nuevoControl = { orden, componente, obs, fecha };
-
-        // 2. Almacenamiento en LocalStorage (Persistente en el navegador)
-        let controles = JSON.parse(localStorage.getItem('controlesHidraulicos')) || [];
-        controles.push(nuevoControl);
-        localStorage.setItem('controlesHidraulicos', JSON.stringify(controles));
-
-        limpiarCampos();
-        mostrarControles();
+    function irA(idVista) {
+        document.querySelectorAll('.vista').forEach(v => v.classList.remove('activa'));
+        document.getElementById(idVista).classList.add('activa');
     }
 
-    function mostrarControles() {
-        const lista = document.getElementById('listaControles');
-        const controles = JSON.parse(localStorage.getItem('controlesHidraulicos')) || [];
+    function guardarDato() {
+        const cliente = document.getElementById('nombre').value;
+        const equipo = document.getElementById('equipo').value;
+        const detalle = document.getElementById('detalle').value;
+        const fecha = new Date().toLocaleString();
+
+        if(!cliente) return alert("Mínimo pon el nombre del cliente");
+
+        const registro = { cliente, equipo, detalle, fecha };
         
-        lista.innerHTML = controles.reverse().map(c => `
-            <div class="control-card">
-                <div>
-                    <strong>${c.orden}</strong> <span class="badge">${c.componente}</span><br>
-                    <small style="color: #666;">${c.fecha}</small><br>
-                    <p style="margin: 5px 0;">${c.obs}</p>
-                </div>
+        let historial = JSON.parse(localStorage.getItem('archivo_hidraulica')) || [];
+        historial.push(registro);
+        localStorage.setItem('archivo_hidraulica', JSON.stringify(historial));
+
+        alert("¡Guardado en el archivo!");
+        irA('menu');
+        limpiarCampos();
+    }
+
+    function cargarArchivo() {
+        const lista = document.getElementById('lista-archivo');
+        const datos = JSON.parse(localStorage.getItem('archivo_hidraulica')) || [];
+        
+        if(datos.length === 0) {
+            lista.innerHTML = "<p>No hay registros guardados.</p>";
+            return;
+        }
+
+        lista.innerHTML = datos.reverse().map(d => `
+            <div class="tarjeta-archivo">
+                <strong>${d.cliente}</strong> - <small>${d.fecha}</small><br>
+                <span>Mák: ${d.equipo}</span><br>
+                <p style="font-size: 0.9em; color: #555;">${d.detalle}</p>
             </div>
         `).join('');
     }
 
-    function limpiarCampos() {
-        document.getElementById('orden').value = '';
-        document.getElementById('obs').value = '';
+    function descargarJSON() {
+        const data = localStorage.getItem('archivo_hidraulica');
+        const blob = new Blob([data], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `archivo_guillote_${new Date().toLocaleDateString()}.json`;
+        a.click();
     }
 
-    // 3. Exportar a un archivo real (Carga en archivos)
-    function descargarJSON() {
-        const data = localStorage.getItem('controlesHidraulicos');
-        const blob = new Blob([data], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `controles_guillote_${new Date().toLocaleDateString()}.json`;
-        a.click();
+    function limpiarCampos() {
+        document.getElementById('nombre').value = '';
+        document.getElementById('equipo').value = '';
+        document.getElementById('detalle').value = '';
     }
 </script>
 
