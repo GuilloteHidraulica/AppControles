@@ -3,167 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guillote Hidráulica - Gestión Técnica</title>
-    <!-- Librería para generar PDFs -->
+    <title>GUILLOTE HIDRÁULICA - Control Pro</title>
     <script src="https://cdnjs.cloudflare.com"></script>
     <style>
         :root {
-            --acero: #2c3e50;
-            --azul-hidraulico: #2980b9;
-            --naranja-mecanico: #e67e22;
-            --gris-fondo: #121212;
-            --blanco-humo: #ecf0f1;
-            --input-bg: #1e1e1e;
+            --metal: #2c3e50;
+            --azul-hidraulico: #3498db;
+            --naranja-alerta: #f39c12;
+            --fondo: #0f0f0f;
+            --led-on: #2ecc71;
         }
 
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: var(--gris-fondo);
-            color: var(--blanco-humo);
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--fondo);
+            background-image: radial-gradient(#222 5%, transparent 5%);
+            background-size: 20px 20px;
+            color: #ecf0f1;
             margin: 0;
             display: flex;
             justify-content: center;
-            padding: 20px 0;
+            padding: 20px;
         }
 
-        .contenedor-principal {
-            width: 95%;
-            max-width: 600px;
-            background: var(--acero);
-            border: 3px solid var(--azul-hidraulico);
-            border-radius: 12px;
+        .panel-principal {
+            width: 100%;
+            max-width: 700px;
+            background: linear-gradient(145deg, #1e272e, #2f3640);
+            border: 4px solid #444;
+            border-radius: 15px;
             padding: 25px;
-            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+            box-shadow: 10px 10px 20px #000;
+            position: relative;
         }
 
-        h1, h2 {
-            color: var(--azul-hidraulico);
-            text-transform: uppercase;
+        .header {
             text-align: center;
-            border-bottom: 2px solid var(--azul-hidraulico);
+            border-bottom: 3px double var(--azul-hidraulico);
+            margin-bottom: 25px;
             padding-bottom: 10px;
         }
 
-        .menu-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        .header h1 { margin: 0; color: var(--azul-hidraulico); letter-spacing: 3px; }
 
-        .btn {
-            padding: 15px;
-            font-weight: bold;
-            color: white;
-            background: #34495e;
-            border: 2px solid var(--azul-hidraulico);
-            border-radius: 8px;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: 0.3s;
+        .led {
+            height: 10px; width: 10px; background: var(--led-on);
+            border-radius: 50%; display: inline-block;
+            box-shadow: 0 0 10px var(--led-on);
+            margin-right: 10px;
         }
 
-        .btn:hover { background: var(--azul-hidraulico); transform: translateY(-2px); }
-        .btn-naranja { border-color: var(--naranja-mecanico); }
-        .btn-naranja:hover { background: var(--naranja-mecanico); }
+        .menu-grid { display: grid; gap: 20px; }
+
+        .btn-industrial {
+            background: #3d3d3d;
+            color: white;
+            padding: 20px;
+            border: 2px solid #555;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            box-shadow: inset 0 0 5px #000;
+            transition: 0.2s;
+        }
+
+        .btn-industrial:hover { background: var(--azul-hidraulico); border-color: #fff; }
+        .btn-naranja { border-color: var(--naranja-alerta); color: var(--naranja-alerta); }
+        .btn-naranja:hover { background: var(--naranja-alerta); color: white; }
 
         .vista { display: none; }
-        .activa { display: block; }
+        .activa { display: block; animation: fadeIn 0.5s; }
 
-        /* Estilo de Formulario Técnico */
-        .campo-grupo { margin-bottom: 15px; }
-        label { display: block; color: var(--naranja-mecanico); font-size: 0.85em; font-weight: bold; margin-bottom: 5px; }
-        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .form-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .full-width { grid-column: span 2; }
+
+        label { color: var(--naranja-alerta); font-size: 0.8em; font-weight: bold; display: block; margin-bottom: 5px; }
+
         input, textarea {
             width: 100%;
-            padding: 10px;
-            background: var(--input-bg);
-            border: 1px solid #444;
-            color: white;
+            padding: 12px;
+            background: #111;
+            border: 1px solid var(--azul-hidraulico);
+            color: #2ecc71;
             border-radius: 4px;
             box-sizing: border-box;
+            font-family: monospace;
         }
 
-        input:focus { border-color: var(--azul-hidraulico); outline: none; }
-
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-        .btn-volver { background: transparent; border: none; color: #bdc3c7; cursor: pointer; margin-bottom: 10px; }
-
-        .tarjeta-archivo {
-            background: #fdfdfd;
-            color: #2c3e50;
+        .tarjeta-registro {
+            background: #222;
+            border-left: 5px solid var(--azul-hidraulico);
             padding: 15px;
             margin-bottom: 15px;
-            border-left: 8px solid var(--azul-hidraulico);
-            border-radius: 5px;
-            font-size: 0.9em;
+            border-radius: 0 10px 10px 0;
         }
+
+        .btn-volver { color: #888; cursor: pointer; text-decoration: underline; margin-bottom: 15px; display: inline-block; }
     </style>
 </head>
 <body>
 
-<div class="contenedor-principal">
+<div class="panel-principal">
     
-    <!-- MENÚ PRINCIPAL -->
-    <div id="menu" class="vista activa">
-        <h1>⚙️ PANEL DE CONTROL</h1>
+    <!-- MENÚ -->
+    <div id="vista-menu" class="vista activa">
+        <div class="header">
+            <h1><span class="led"></span>SISTEMA HIDRÁULICO</h1>
+            <p>GUILLOTE HIDRÁULICA v3.0</p>
+        </div>
         <div class="menu-grid">
-            <button class="btn" onclick="irA('nuevo')">📝 Cargar Nueva Máquina</button>
-            <button class="btn" onclick="irA('archivo'); cargarArchivo();">📂 Archivo de Controles</button>
+            <button class="btn-industrial" onclick="navegar('vista-carga')">⚙️ Cargar Datos Máquina</button>
+            <button class="btn-industrial btn-naranja" onclick="navegar('vista-archivo'); listarRegistros();">📂 Ver Archivo de Trabajos</button>
         </div>
     </div>
 
-    <!-- VISTA: CARGAR DATA -->
-    <div id="nuevo" class="vista">
-        <button class="btn-volver" onclick="irA('menu')">⬅ VOLVER AL MENÚ</button>
-        <h2>Datos de la Máquina</h2>
-        
-        <div class="campo-grupo">
-            <label>Cliente / Director de Proyecto:</label>
-            <input type="text" id="director" placeholder="Nombre del responsable">
-        </div>
-
-        <div class="grid-2">
-            <div class="campo-grupo">
-                <label>Marca:</label>
-                <input type="text" id="marca" placeholder="Ej: Caterpillar">
+    <!-- CARGA DE DATOS -->
+    <div id="vista-carga" class="vista">
+        <span class="btn-volver" onclick="navegar('vista-menu')">↩ VOLVER AL PANEL</span>
+        <h2 style="color: var(--azul-hidraulico)">REGISTRO TÉCNICO</h2>
+        <div class="form-container">
+            <div class="full-width">
+                <label>DIRECTOR DE PROYECTO / CLIENTE</label>
+                <input type="text" id="inp-director">
             </div>
-            <div class="campo-grupo">
-                <label>Modelo:</label>
-                <input type="text" id="modelo" placeholder="Ej: 320D">
+            <div>
+                <label>MARCA</label>
+                <input type="text" id="inp-marca">
             </div>
-        </div>
-
-        <div class="grid-2">
-            <div class="campo-grupo">
-                <label>N° de Serie:</label>
-                <input type="text" id="serie" placeholder="S/N 12345">
+            <div>
+                <label>MODELO</label>
+                <input type="text" id="inp-modelo">
             </div>
-            <div class="campo-grupo">
-                <label>Horas de Trabajo:</label>
-                <input type="number" id="horas" placeholder="0000">
+            <div>
+                <label>N° DE SERIE</label>
+                <input type="text" id="inp-serie">
             </div>
+            <div>
+                <label>HORAS DE TRABAJO</label>
+                <input type="number" id="inp-horas">
+            </div>
+            <div class="full-width">
+                <label>TRABAJOS REALIZADOS</label>
+                <textarea id="inp-realizados" rows="2"></textarea>
+            </div>
+            <div class="full-width">
+                <label>TRABAJOS PENDIENTES</label>
+                <textarea id="inp-pendientes" rows="2"></textarea>
+            </div>
+            <div class="full-width">
+                <label>OBSERVACIONES</label>
+                <textarea id="inp-obs" rows="2"></textarea>
+            </div>
+            <button class="btn-industrial full-width" onclick="guardarDatos()">💾 PROCESAR Y GUARDAR</button>
         </div>
-
-        <div class="campo-grupo">
-            <label>Trabajos Realizados:</label>
-            <textarea id="realizados" rows="2"></textarea>
-        </div>
-
-        <div class="campo-grupo">
-            <label>Trabajos Pendientes:</label>
-            <textarea id="pendientes" rows="2"></textarea>
-        </div>
-
-        <div class="campo-grupo">
-            <label>Observaciones Generales:</label>
-            <textarea id="obs" rows="2"></textarea>
-        </div>
-
-        <button class="btn btn-naranja" style="width:100%" onclick="guardarRegistro()">💾 GUARDAR Y REGISTRAR</button>
     </div>
 
-    <!-- VISTA: ARCHIVO -->
-    <div id="archivo" class="vista">
-        <button class="btn-volver" onclick="irA('menu')">⬅ VOLVER AL MENÚ</button>
-        <h2>Historial Técnico</h2>
-        <div id="lista-archivo" style="max-height: 400px; overflow-y: auto;"></div>
+    <!-- ARCHIVO -->
+    <div id="vista-archivo" class="vista">
+        <span class="btn-volver" onclick="navegar('vista-menu')">↩ VOLVER AL PANEL</span>
+        <h2 style="color: var(--naranja-alerta)">ARCHIVO DE REGISTROS</h2>
+        <div id="lista-contenedor" style="max-height: 500px; overflow-y: auto; padding-right: 10px;"></div>
     </div>
 
 </div>
@@ -171,101 +173,96 @@
 <script>
     const { jsPDF } = window.jspdf;
 
-    function irA(id) {
+    function navegar(id) {
         document.querySelectorAll('.vista').forEach(v => v.classList.remove('activa'));
         document.getElementById(id).classList.add('activa');
     }
 
-    function guardarRegistro() {
-        const datos = {
-            director: document.getElementById('director').value,
-            marca: document.getElementById('marca').value,
-            modelo: document.getElementById('modelo').value,
-            serie: document.getElementById('serie').value,
-            horas: document.getElementById('horas').value,
-            realizados: document.getElementById('realizados').value,
-            pendientes: document.getElementById('pendientes').value,
-            obs: document.getElementById('obs').value,
+    function guardarDatos() {
+        const registro = {
+            director: document.getElementById('inp-director').value,
+            marca: document.getElementById('inp-marca').value,
+            modelo: document.getElementById('inp-modelo').value,
+            serie: document.getElementById('inp-serie').value,
+            horas: document.getElementById('inp-horas').value,
+            realizados: document.getElementById('inp-realizados').value,
+            pendientes: document.getElementById('inp-pendientes').value,
+            obs: document.getElementById('inp-obs').value,
             fecha: new Date().toLocaleString()
         };
 
-        if(!datos.director || !datos.marca) return alert("Completa al menos Cliente y Marca.");
-
-        let historial = JSON.parse(localStorage.getItem('hidraulica_v2')) || [];
-        historial.push(datos);
-        localStorage.setItem('hidraulica_v2', JSON.stringify(historial));
-
-        alert("Registro guardado con éxito.");
-        limpiarCampos();
-        irA('menu');
-    }
-
-    function cargarArchivo() {
-        const lista = document.getElementById('lista-archivo');
-        const datos = JSON.parse(localStorage.getItem('hidraulica_v2')) || [];
-        
-        if(datos.length === 0) {
-            lista.innerHTML = "<p style='text-align:center'>No hay registros en la base de datos.</p>";
+        if(!registro.director || !registro.marca) {
+            alert("Error: Faltan datos críticos (Director y Marca)");
             return;
         }
 
-        lista.innerHTML = datos.reverse().map((d, index) => `
-            <div class="tarjeta-archivo">
-                <div style="display:flex; justify-content:space-between">
-                    <strong>${d.marca} ${d.modelo}</strong>
-                    <small>${d.fecha}</small>
+        let db = JSON.parse(localStorage.getItem('gh_data')) || [];
+        db.push(registro);
+        localStorage.setItem('gh_data', JSON.stringify(db));
+
+        alert("DATOS ALMACENADOS CORRECTAMENTE");
+        limpiarInputs();
+        navegar('vista-menu');
+    }
+
+    function listarRegistros() {
+        const contenedor = document.getElementById('lista-contenedor');
+        const db = JSON.parse(localStorage.getItem('gh_data')) || [];
+        
+        if(db.length === 0) {
+            contenedor.innerHTML = "<p>ARCHIVO VACÍO</p>";
+            return;
+        }
+
+        contenedor.innerHTML = db.reverse().map((reg, idx) => `
+            <div class="tarjeta-registro">
+                <div style="font-size: 0.8em; color: #888;">${reg.fecha}</div>
+                <div style="font-weight: bold; color: var(--azul-hidraulico); margin: 5px 0;">
+                    ${reg.marca} ${reg.modelo} - SN: ${reg.serie}
                 </div>
-                <hr>
-                <b>S/N:</b> ${d.serie} | <b>Horas:</b> ${d.horas}<br>
-                <b>Director:</b> ${d.director}<br>
-                <button class="btn" style="padding:5px 10px; margin-top:10px; font-size:0.7em" 
-                    onclick="generarPDF(${datos.length - 1 - index})">📥 Descargar PDF</button>
+                <div style="font-size: 0.9em;">Resp: ${reg.director}</div>
+                <button class="btn-industrial" style="padding: 5px 10px; margin-top:10px; width: 100%; font-size: 0.7em;" 
+                    onclick="exportarPDF(${db.length - 1 - idx})">📄 GENERAR PDF</button>
             </div>
         `).join('');
     }
 
-    function generarPDF(index) {
-        const datos = JSON.parse(localStorage.getItem('hidraulica_v2'))[index];
+    function exportarPDF(index) {
+        const data = JSON.parse(localStorage.getItem('gh_data'))[index];
         const doc = new jsPDF();
 
-        // Estilo del PDF
-        doc.setFontSize(20);
-        doc.setTextColor(41, 128, 185);
-        doc.text("GUILLOTE HIDRÁULICA - REPORTE TÉCNICO", 20, 20);
-        
-        doc.setFontSize(12);
-        doc.setTextColor(0, 0, 0);
-        doc.text(`Fecha: ${datos.fecha}`, 20, 35);
-        
-        doc.setDrawColor(230, 126, 34);
-        doc.line(20, 40, 190, 40);
+        doc.setFont("courier", "bold");
+        doc.text("GUILLOTE HIDRÁULICA - REPORTE TÉCNICO", 15, 20);
+        doc.setFont("courier", "normal");
+        doc.setFontSize(10);
+        doc.text(`FECHA: ${data.fecha}`, 15, 30);
+        doc.line(15, 32, 195, 32);
 
-        let y = 50;
-        const lineas = [
-            `DIRECTOR DE PROYECTO: ${datos.director}`,
-            `MÁQUINA: ${datos.marca} ${datos.modelo}`,
-            `NÚMERO DE SERIE: ${datos.serie}`,
-            `HORAS DE TRABAJO: ${datos.horas} hrs`,
-            `--------------------------------------------------`,
-            `TRABAJOS REALIZADOS:`,
-            datos.realizados || "N/A",
-            ` `,
-            `TRABAJOS PENDIENTES:`,
-            datos.pendientes || "N/A",
-            ` `,
-            `OBSERVACIONES:`,
-            datos.obs || "N/A"
+        const campos = [
+            ["DIRECTOR DE PROYECTO", data.director],
+            ["MARCA", data.marca],
+            ["MODELO", data.modelo],
+            ["N° SERIE", data.serie],
+            ["HORAS", data.horas],
+            ["", ""],
+            ["TRABAJOS REALIZADOS", data.realizados],
+            ["TRABAJOS PENDIENTES", data.pendientes],
+            ["OBSERVACIONES", data.obs]
         ];
 
-        lineas.forEach(linea => {
-            doc.text(linea, 20, y);
+        let y = 45;
+        campos.forEach(c => {
+            doc.setFont("courier", "bold");
+            doc.text(`${c[0]}:`, 15, y);
+            doc.setFont("courier", "normal");
+            doc.text(`${c[1]}`, 70, y);
             y += 10;
         });
 
-        doc.save(`Reporte_${datos.marca}_${datos.serie}.pdf`);
+        doc.save(`Reporte_${data.marca}_${data.serie}.pdf`);
     }
 
-    function limpiarCampos() {
+    function limpiarInputs() {
         document.querySelectorAll('input, textarea').forEach(i => i.value = '');
     }
 </script>
